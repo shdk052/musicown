@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MusicOwn – הורד עכשיו</title>
+  <link href="https://fonts.googleapis.com/css2?family=Alef:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --teal-deep:    #003d40;
+      --teal-mid:     #006d75;
+      --teal-bright:  #00bcd4;
+      --teal-glow:    #4dd0e1;
+      --teal-pale:    #b2ebf2;
+      --accent:       #00e5ff;
+      --white:        #f0fdff;
+      --dark:         #001a1c;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--dark);
+      color: var(--white);
+      font-family: 'Alef', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* ── animated mesh background ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(0,188,212,.18) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 80% at 80% 80%, rgba(0,109,117,.22) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 50% at 50% 50%, rgba(0,229,255,.07) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── floating particles ── */
+    .particles { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      background: var(--accent);
+      opacity: 0;
+      animation: float linear infinite;
+    }
+    @keyframes float {
+      0%   { transform: translateY(100vh) scale(0); opacity: 0; }
+      10%  { opacity: .5; }
+      90%  { opacity: .2; }
+      100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+    }
+
+    /* ── layout ── */
+    main {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 3rem 1.5rem;
+      gap: 2.5rem;
+    }
+
+    /* ── logo / badge ── */
+    .badge {
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      background: rgba(0,188,212,.1);
+      border: 1px solid rgba(0,229,255,.25);
+      border-radius: 999px;
+      padding: .45rem 1.2rem;
+      font-family: 'Space Mono', monospace;
+      font-size: .75rem;
+      letter-spacing: .12em;
+      color: var(--teal-glow);
+      text-transform: uppercase;
+      animation: fadeDown .6s ease both;
+    }
+    .badge-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+      animation: pulse 1.8s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:.3;} }
+
+    /* ── headline ── */
+    h1 {
+      font-family: 'Space Mono', monospace;
+      font-size: clamp(2.8rem, 8vw, 6rem);
+      font-weight: 700;
+      line-height: 1;
+      text-align: center;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--teal-glow) 50%, var(--teal-pale) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 0 30px rgba(0,229,255,.35));
+      animation: fadeDown .7s .1s ease both;
+    }
+
+    .subtitle {
+      font-size: 1.15rem;
+      color: rgba(178,235,242,.65);
+      text-align: center;
+      max-width: 480px;
+      line-height: 1.7;
+      animation: fadeDown .7s .2s ease both;
+    }
+
+    /* ── card ── */
+    .card {
+      background: rgba(0,61,64,.45);
+      border: 1px solid rgba(0,229,255,.18);
+      border-radius: 24px;
+      padding: 2.5rem 3rem;
+      width: min(520px, 100%);
+      backdrop-filter: blur(18px);
+      box-shadow:
+        0 0 0 1px rgba(0,229,255,.05),
+        0 8px 60px rgba(0,0,0,.5),
+        inset 0 1px 0 rgba(255,255,255,.06);
+      animation: fadeUp .7s .3s ease both;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .file-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 1.2rem;
+      background: rgba(0,229,255,.06);
+      border: 1px solid rgba(0,229,255,.12);
+      border-radius: 14px;
+    }
+    .file-icon {
+      font-size: 2rem;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .file-meta { display: flex; flex-direction: column; gap: .25rem; }
+    .file-name {
+      font-family: 'Space Mono', monospace;
+      font-size: .95rem;
+      color: var(--accent);
+      font-weight: 700;
+      letter-spacing: .03em;
+    }
+    .file-tag {
+      font-size: .75rem;
+      color: rgba(178,235,242,.5);
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    /* ── features ── */
+    .features {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .75rem;
+    }
+    .feature {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      font-size: .85rem;
+      color: rgba(178,235,242,.7);
+    }
+    .feature::before {
+      content: '✦';
+      color: var(--teal-bright);
+      font-size: .7rem;
+      flex-shrink: 0;
+    }
+
+    /* ── download button ── */
+    .btn-download {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: .75rem;
+      width: 100%;
+      padding: 1.1rem 2rem;
+      border-radius: 14px;
+      border: none;
+      cursor: pointer;
+      font-family: 'Alef', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--dark);
+      background: linear-gradient(135deg, var(--accent) 0%, var(--teal-bright) 100%);
+      box-shadow:
+        0 0 0 1px rgba(0,229,255,.3),
+        0 4px 30px rgba(0,229,255,.35),
+        0 0 60px rgba(0,188,212,.15);
+      transition: transform .2s, box-shadow .2s, filter .2s;
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-download::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, rgba(255,255,255,.25) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity .2s;
+    }
+    .btn-download:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow:
+        0 0 0 1px rgba(0,229,255,.5),
+        0 8px 40px rgba(0,229,255,.5),
+        0 0 80px rgba(0,188,212,.25);
+      filter: brightness(1.08);
+    }
+    .btn-download:hover::after { opacity: 1; }
+    .btn-download:active { transform: translateY(0) scale(.98); }
+    .btn-icon { font-size: 1.3rem; }
+
+    /* ── ripple on click ── */
+    .ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255,255,255,.3);
+      transform: scale(0);
+      animation: rippleAnim .6s linear;
+      pointer-events: none;
+    }
+    @keyframes rippleAnim {
+      to { transform: scale(4); opacity: 0; }
+    }
+
+    /* ── footer note ── */
+    .note {
+      font-size: .8rem;
+      color: rgba(178,235,242,.35);
+      text-align: center;
+      animation: fadeUp .7s .45s ease both;
+    }
+
+    /* ── keyframes ── */
+    @keyframes fadeDown {
+      from { opacity:0; transform: translateY(-18px); }
+      to   { opacity:1; transform: translateY(0); }
+    }
+    @keyframes fadeUp {
+      from { opacity:0; transform: translateY(18px); }
+      to   { opacity:1; transform: translateY(0); }
+    }
+
+    /* ── corner decorations ── */
+    .corner {
+      position: fixed;
+      width: 160px; height: 160px;
+      pointer-events: none;
+      z-index: 0;
+      opacity: .18;
+    }
+    .corner svg { width:100%; height:100%; }
+    .corner-tl { top:0; right:0; }
+    .corner-br { bottom:0; left:0; transform: rotate(180deg); }
+  </style>
+</head>
+<body>
+
+  <!-- particles -->
+  <div class="particles" id="particles"></div>
+
+  <!-- corner deco -->
+  <div class="corner corner-tl">
+    <svg viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="160" cy="0" r="80" stroke="#00e5ff" stroke-width="1"/>
+      <circle cx="160" cy="0" r="120" stroke="#00bcd4" stroke-width=".5"/>
+      <circle cx="160" cy="0" r="55"  stroke="#4dd0e1" stroke-width="1.5"/>
+    </svg>
+  </div>
+  <div class="corner corner-br">
+    <svg viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="160" cy="0" r="80" stroke="#00e5ff" stroke-width="1"/>
+      <circle cx="160" cy="0" r="120" stroke="#00bcd4" stroke-width=".5"/>
+      <circle cx="160" cy="0" r="55"  stroke="#4dd0e1" stroke-width="1.5"/>
+    </svg>
+  </div>
+
+  <main>
+    <div class="badge">
+      <span class="badge-dot"></span>
+      זמין להורדה
+    </div>
+
+    <h1>MusicOwn</h1>
+
+    <p class="subtitle">
+      הורד את האפליקציה שלך בקליק אחד.<br>
+      מהיר, בטוח, ישיר.
+    </p>
+
+    <div class="card">
+      <div class="file-info">
+        <span class="file-icon">🎵</span>
+        <div class="file-meta">
+          <span class="file-name">MusicOwn.exe</span>
+          <span class="file-tag">Windows Application · EXE</span>
+        </div>
+      </div>
+
+      <div class="features">
+        <span class="feature">הורדה ישירה</span>
+        <span class="feature">ללא רישום</span>
+        <span class="feature">מהירות מלאה</span>
+        <span class="feature">Windows תמיכה</span>
+      </div>
+
+      <a class="btn-download" href="MusicOwn.exe" download="MusicOwn.exe" id="dlBtn">
+        <span class="btn-icon">⬇</span>
+        הורד עכשיו
+      </a>
+    </div>
+
+    <p class="note">לחץ על הכפתור להורדה מיידית של הקובץ</p>
+  </main>
+
+  <script>
+    // ── ripple effect ──
+    document.getElementById('dlBtn').addEventListener('click', function(e) {
+      const btn = this;
+      const circle = document.createElement('span');
+      circle.classList.add('ripple');
+      const rect = btn.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height);
+      circle.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX-rect.left-size/2}px;top:${e.clientY-rect.top-size/2}px;`;
+      btn.appendChild(circle);
+      setTimeout(() => circle.remove(), 700);
+    });
+
+    // ── particles ──
+    const container = document.getElementById('particles');
+    for (let i = 0; i < 28; i++) {
+      const p = document.createElement('div');
+      p.classList.add('particle');
+      const size = Math.random() * 4 + 1.5;
+      p.style.cssText = `
+        width:${size}px;height:${size}px;
+        left:${Math.random()*100}%;
+        animation-duration:${Math.random()*12+8}s;
+        animation-delay:${Math.random()*10}s;
+        opacity:0;
+      `;
+      container.appendChild(p);
+    }
+  </script>
+</body>
+</html>
