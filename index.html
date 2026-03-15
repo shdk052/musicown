@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MusicOwn – הורד עכשיו</title>
-  <link href="https://fonts.googleapis.com/css2?family=Alef:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Alef:wght@400;700&family=Space+Mono:wght@400;700&family=Syne:wght@500;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
       --teal-deep:    #003d40;
@@ -15,6 +15,8 @@
       --accent:       #00e5ff;
       --white:        #f0fdff;
       --dark:         #001a1c;
+      --green:        #00e676;
+      --green-glow:   #69f0ae;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -119,22 +121,90 @@
       animation: fadeDown .7s .2s ease both;
     }
 
+    /* ── versions wrapper ── */
+    .versions-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      width: min(560px, 100%);
+      animation: fadeUp .7s .3s ease both;
+    }
+
+    /* ── version label ── */
+    .version-label {
+      font-family: 'Syne', sans-serif;
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      margin-bottom: -.5rem;
+      padding-right: .25rem;
+    }
+    .version-label.v1 { color: rgba(178,235,242,.4); }
+    .version-label.v2 { color: var(--green-glow); }
+
     /* ── card ── */
     .card {
       background: rgba(0,61,64,.45);
       border: 1px solid rgba(0,229,255,.18);
       border-radius: 24px;
-      padding: 2.5rem 3rem;
-      width: min(520px, 100%);
+      padding: 2.2rem 2.5rem;
+      width: 100%;
       backdrop-filter: blur(18px);
       box-shadow:
         0 0 0 1px rgba(0,229,255,.05),
         0 8px 60px rgba(0,0,0,.5),
         inset 0 1px 0 rgba(255,255,255,.06);
-      animation: fadeUp .7s .3s ease both;
       display: flex;
       flex-direction: column;
-      gap: 1.5rem;
+      gap: 1.4rem;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+    }
+
+    /* ── v2 card special styling ── */
+    .card.v2 {
+      border-color: rgba(0,230,118,.3);
+      background: rgba(0,15,5,.55);
+      box-shadow:
+        0 0 0 1px rgba(0,230,118,.1),
+        0 8px 60px rgba(0,0,0,.5),
+        0 0 40px rgba(0,230,118,.06),
+        inset 0 1px 0 rgba(255,255,255,.06);
+      position: relative;
+      overflow: hidden;
+    }
+    .card.v2::before {
+      content: '';
+      position: absolute;
+      top: -60px; left: -60px;
+      width: 180px; height: 180px;
+      background: radial-gradient(circle, rgba(0,230,118,.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* ── new badge ── */
+    .new-badge {
+      position: absolute;
+      top: 1rem;
+      left: 1.2rem;
+      background: linear-gradient(135deg, var(--green) 0%, #00c853 100%);
+      color: #001a0a;
+      font-family: 'Syne', sans-serif;
+      font-size: .7rem;
+      font-weight: 800;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: .25rem .7rem;
+      border-radius: 999px;
+      box-shadow: 0 0 12px rgba(0,230,118,.4);
+      animation: badgePulse 2s ease-in-out infinite;
+    }
+    @keyframes badgePulse {
+      0%,100% { box-shadow: 0 0 12px rgba(0,230,118,.4); }
+      50%      { box-shadow: 0 0 22px rgba(0,230,118,.75); }
     }
 
     .file-info {
@@ -146,6 +216,11 @@
       border: 1px solid rgba(0,229,255,.12);
       border-radius: 14px;
     }
+    .card.v2 .file-info {
+      background: rgba(0,230,118,.06);
+      border-color: rgba(0,230,118,.18);
+    }
+
     .file-icon {
       font-size: 2rem;
       line-height: 1;
@@ -159,12 +234,14 @@
       font-weight: 700;
       letter-spacing: .03em;
     }
+    .card.v2 .file-name { color: var(--green-glow); }
     .file-tag {
       font-size: .75rem;
       color: rgba(178,235,242,.5);
       letter-spacing: .06em;
       text-transform: uppercase;
     }
+    .card.v2 .file-tag { color: rgba(105,240,174,.45); }
 
     /* ── features ── */
     .features {
@@ -185,6 +262,8 @@
       font-size: .7rem;
       flex-shrink: 0;
     }
+    .card.v2 .feature { color: rgba(105,240,174,.8); }
+    .card.v2 .feature::before { color: var(--green); }
 
     /* ── download button ── */
     .btn-download {
@@ -211,6 +290,14 @@
       position: relative;
       overflow: hidden;
     }
+    .btn-download.v2-btn {
+      background: linear-gradient(135deg, var(--green) 0%, #00c853 100%);
+      color: #001a0a;
+      box-shadow:
+        0 0 0 1px rgba(0,230,118,.3),
+        0 4px 30px rgba(0,230,118,.35),
+        0 0 60px rgba(0,200,83,.15);
+    }
     .btn-download::after {
       content: '';
       position: absolute;
@@ -226,6 +313,12 @@
         0 8px 40px rgba(0,229,255,.5),
         0 0 80px rgba(0,188,212,.25);
       filter: brightness(1.08);
+    }
+    .btn-download.v2-btn:hover {
+      box-shadow:
+        0 0 0 1px rgba(0,230,118,.55),
+        0 8px 40px rgba(0,230,118,.5),
+        0 0 80px rgba(0,200,83,.25);
     }
     .btn-download:hover::after { opacity: 1; }
     .btn-download:active { transform: translateY(0) scale(.98); }
@@ -305,30 +398,62 @@
     <h1>MusicOwn</h1>
 
     <p class="subtitle">
-     הורד את אפליקצית הורדת שירים מיוטיוב<br>
+      הורד את אפליקצית הורדת שירים מיוטיוב<br>
       מהיר, בטוח, ישיר.
     </p>
 
-    <div class="card">
-      <div class="file-info">
-        <span class="file-icon">🎵</span>
-        <div class="file-meta">
-          <span class="file-name">MusicOwnSetup.exe</span>
-          <span class="file-tag">Windows Application · EXE</span>
+    <div class="versions-wrapper">
+
+      <!-- ── Version 2.0 (featured) ── -->
+      <span class="version-label v2">⭐ גרסה מומלצת</span>
+      <div class="card v2">
+        <span class="new-badge">חדש · v2.0</span>
+
+        <div class="file-info">
+          <span class="file-icon">🎶</span>
+          <div class="file-meta">
+            <span class="file-name">MusicOwnSetup_2.exe</span>
+            <span class="file-tag">Windows Application · EXE · v2.0</span>
+          </div>
         </div>
+
+        <div class="features">
+          <span class="feature">ממשק ועיצוב משופר</span>
+          <span class="feature">פורמט MP3 קבוע</span>
+          <span class="feature">אנימציות משופרות</span>
+          <span class="feature">תיקיית הורדות נגישה יותר</span>
+        </div>
+
+        <a class="btn-download v2-btn" href="MusicOwnSetup_2.exe" download="MusicOwnSetup_2.exe" id="dlBtn2">
+          <span class="btn-icon">⬇</span>
+          הורד גרסה 2.0
+        </a>
       </div>
 
-      <div class="features">
-        <span class="feature">הורדה ישירה</span>
-        <span class="feature">ללא רישום</span>
-        <span class="feature">מהירות מלאה</span>
-        <span class="feature">Windows תמיכה</span>
+      <!-- ── Version 1 (legacy) ── -->
+      <span class="version-label v1">גרסה קודמת</span>
+      <div class="card">
+        <div class="file-info">
+          <span class="file-icon">🎵</span>
+          <div class="file-meta">
+            <span class="file-name">MusicOwnSetup.exe</span>
+            <span class="file-tag">Windows Application · EXE · v1.0</span>
+          </div>
+        </div>
+
+        <div class="features">
+          <span class="feature">הורדה ישירה</span>
+          <span class="feature">ללא רישום</span>
+          <span class="feature">מהירות מלאה</span>
+          <span class="feature">Windows תמיכה</span>
+        </div>
+
+        <a class="btn-download" href="MusicOwnSetup.exe" download="MusicOwnSetup.exe" id="dlBtn">
+          <span class="btn-icon">⬇</span>
+          הורד גרסה 1.0
+        </a>
       </div>
 
-      <a class="btn-download" href="MusicOwnSetup.exe" download="MusicOwnSetup.exe" id="dlBtn">
-        <span class="btn-icon">⬇</span>
-        הורד עכשיו
-      </a>
     </div>
 
     <p class="note">לחץ על הכפתור להורדה מיידית של הקובץ</p>
@@ -336,16 +461,19 @@
 
   <script>
     // ── ripple effect ──
-    document.getElementById('dlBtn').addEventListener('click', function(e) {
-      const btn = this;
-      const circle = document.createElement('span');
-      circle.classList.add('ripple');
-      const rect = btn.getBoundingClientRect();
-      const size = Math.max(rect.width, rect.height);
-      circle.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX-rect.left-size/2}px;top:${e.clientY-rect.top-size/2}px;`;
-      btn.appendChild(circle);
-      setTimeout(() => circle.remove(), 700);
-    });
+    function addRipple(btn) {
+      btn.addEventListener('click', function(e) {
+        const circle = document.createElement('span');
+        circle.classList.add('ripple');
+        const rect = btn.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        circle.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX-rect.left-size/2}px;top:${e.clientY-rect.top-size/2}px;`;
+        btn.appendChild(circle);
+        setTimeout(() => circle.remove(), 700);
+      });
+    }
+    addRipple(document.getElementById('dlBtn'));
+    addRipple(document.getElementById('dlBtn2'));
 
     // ── particles ──
     const container = document.getElementById('particles');
